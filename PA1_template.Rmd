@@ -7,7 +7,7 @@ output:
 
 
 ## Loading and preprocessing the data
-```{r temp,echo=TRUE}
+```{r temp1,echo=TRUE}
 setwd('C:\\Users\\ibrahim\\Desktop\\RepData_PeerAssessment1-master')
 library(dplyr)
 library(ggplot2)
@@ -20,7 +20,7 @@ act.complete <- na.omit(activity)
 
 ## What is mean total number of steps taken per day?
 
-```{r temp,echo=TRUE}
+```{r temp2,echo=TRUE}
 act.day <- group_by(act.complete, date)
 act.day <- summarize(act.day, steps=sum(steps))
 summary(act.day)
@@ -32,7 +32,7 @@ median(act.day$steps)
 
 ## What is the average daily activity pattern?
 
-```{r temp,echo=TRUE}
+```{r temp3,echo=TRUE}
 act.int <- group_by(act.complete, interval)
 act.int <- summarize(act.int, steps=mean(steps))
 ggplot(act.int, aes(interval, steps)) + geom_line()
@@ -44,10 +44,11 @@ act.int[act.int$steps==max(act.int$steps),]
 ## Imputing missing values
 
 
-```{r temp,echo=TRUE}
+```{r temp4,echo=TRUE}
 nrow(activity)-nrow(act.complete)
 names(act.int)[2] <- "mean.steps"
 act.impute <- merge(activity, act.int)
+print(act.impute$mean.steps[is.na(act.impute$steps)])
 act.impute$steps[is.na(act.impute$steps)] <- act.impute$mean.steps[is.na(act.impute$steps)]
 act.day.imp <- group_by(act.impute, date)
 act.day.imp <- summarize(act.day.imp, steps=sum(steps))
@@ -60,7 +61,9 @@ median(act.day.imp$steps)
 ## Are there differences in activity patterns between weekdays and weekends?
 
 
-```{r temp,echo=TRUE}
+```{r temp5,echo=TRUE}
+library(dplyr)
+library(ggplot2)
 act.impute$dayofweek <- weekdays(as.Date(act.impute$date))
 act.impute$weekend <-as.factor(act.impute$dayofweek=="Saturday"|act.impute$dayofweek=="Sunday")
 levels(act.impute$weekend) <- c("Weekday", "Weekend")
